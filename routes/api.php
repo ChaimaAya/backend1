@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicationsController;
+use App\Http\Controllers\UserController;
 use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,11 +34,12 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
     Route::get('/publications', [PublicationsController::class, 'index']);
     Route::post('/publication', [PublicationsController::class, 'store']);
     Route::get('/publicationsUser', [PublicationsController::class, 'userProfilePublications']);
+    Route::get('/publications/{id}', [PublicationsController::class, 'show']);
+    Route::get('/publications/{id}/edit', [PublicationsController::class, 'edit']);
+    Route::put('/publications/{id}/edit', [PublicationsController::class, 'update']);
+    Route::delete('/publications/{id}/', [PublicationsController::class, 'destroy']); 
+    
+    Route::get('/search', [UserController::class, 'search']);
 
-
-Route::get('/publications/{id}', [PublicationsController::class, 'show']);
-Route::get('/publications/{id}/edit', [PublicationsController::class, 'edit']);
-Route::put('/publications/{id}/edit', [PublicationsController::class, 'update']);
-Route::delete('/publications/{id}/', [PublicationsController::class, 'destroy']);
 
 });
