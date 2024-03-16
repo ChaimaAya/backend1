@@ -22,7 +22,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
     Route::post('/register',[AuthController::class,'register']);
     Route::post('/login',[AuthController::class,'login']);
-    Route::get('/user',[AuthController::class,'user']);    
+    Route::get('/user',[AuthController::class,'user']);
+    Route::get('/secteurs',[AuthController::class,'secteurs']);
+    Route::put('/updateprofile',[AuthController::class,'updateProfile']);
+    Route::get('/startup',[AuthController::class,'getStartupDetailsForUser']);
     Route::post('/logout',[AuthController::class,'logout']);
+    Route::post('/getUserType',[AuthController::class,'getUserType']);
 
 });
