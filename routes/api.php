@@ -37,9 +37,10 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
     Route::get('/publications/{id}', [PublicationsController::class, 'show']);
     Route::get('/publications/{id}/edit', [PublicationsController::class, 'edit']);
     Route::put('/publications/{id}/edit', [PublicationsController::class, 'update']);
-    Route::delete('/publications/{id}/', [PublicationsController::class, 'destroy']); 
-    
+    Route::delete('/publications/{id}/', [PublicationsController::class, 'destroy']);
+
     Route::get('/search', [UserController::class, 'search']);
+    Route::post('/uploadAvatar', [UserController::class, 'upload']);
 
 
 });
