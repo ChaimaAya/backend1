@@ -18,33 +18,11 @@ class PublicationsController extends Controller
     {
         try {
             $authenticatedUser = Auth::user();
-    
+
             $publications = Publication::where('user_id', '!=', $authenticatedUser->id)
                                         ->with('user')
                                         ->get();
-    
-            $data = [
-                'status' => 200,
-                'publications' => $publications
-            ];
-            return response()->json($data, 200);
-        } catch (\Exception $e) {
-            $errorData = [
-                'status' => 500,
-                'error' => 'Internal Server Error',
-                'message' => $e->getMessage()
-            ];
-             return response()->json($errorData, 500);
-        }
-    } 
-    public function userProfilePublications(){
-        try {
-            $authenticatedUser = Auth::user();
-    
-            $publications = Publication::where('user_id', $authenticatedUser->id)
-                                        ->with('user')
-                                        ->get();
-    
+
             $data = [
                 'status' => 200,
                 'publications' => $publications
@@ -59,7 +37,29 @@ class PublicationsController extends Controller
              return response()->json($errorData, 500);
         }
     }
-   
+    public function userProfilePublications(){
+        try {
+            $authenticatedUser = Auth::user();
+
+            $publications = Publication::where('user_id', $authenticatedUser->id)
+                                        ->with('user')
+                                        ->get();
+
+            $data = [
+                'status' => 200,
+                'publications' => $publications
+            ];
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            $errorData = [
+                'status' => 500,
+                'error' => 'Internal Server Error',
+                'message' => $e->getMessage()
+            ];
+             return response()->json($errorData, 500);
+        }
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -74,12 +74,12 @@ class PublicationsController extends Controller
      */
     public function store(Request $request)
     {
-    if (Auth::check()) { 
+    if (Auth::check()) {
         $validator = Validator::make($request->all(), [
             'description' => 'required|string|max:200',
             'file' => 'required|mimes:jpg,png,jpeg,mp4,mov,avi|max:20480',
         ]);
-    
+
         if ($validator->fails()) {
             $data = [
                 'status' => 422,
@@ -88,20 +88,20 @@ class PublicationsController extends Controller
             return response()->json($data, 422);
         } else {
             $authenticatedUser = Auth::user();
-    
+
             if ($request->has('file')) {
                 $file = $request->file('file');
                 $filename = time() . '.' . $file->getClientOriginalExtension();
                 $path = 'uploads/';
                 $file->move($path, $filename);
             }
-    
+
             $publication = new Publication();
             $publication->description = $request->description;
             $publication->file = $filename;
-            $publication->user_id = $authenticatedUser->id; 
+            $publication->user_id = $authenticatedUser->id;
             $publication->save();
-    
+
             $data = [
                 'status' => 200,
                 'message' => 'Données créées avec succès'
@@ -139,7 +139,7 @@ class PublicationsController extends Controller
         }
     }
 
-   
+
 
     public function edit(string $id)
     {
@@ -163,8 +163,8 @@ class PublicationsController extends Controller
     public function update(Request $request, string $id)
     {
         $publication=Publication::find($id);
-       
-        $filename = null; 
+
+        $filename = null;
 
         if ($request->has('fiel')) {
             $file = $request->file('file');
@@ -177,20 +177,20 @@ class PublicationsController extends Controller
             $publication->user_id = $request->user_id;
             $publication->save();
 
-            
+
             $data=[
                 'status'=>200,
                 'message'=>'data update with success'
             ];
             return response()->json($data,200);
 
-            
 
-        
+
+
 
     }
 
- 
+
     public function destroy(string $id)
     {
         $publication=Publication::find($id);
