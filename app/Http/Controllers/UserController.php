@@ -77,4 +77,27 @@ class UserController extends Controller
 
     return response()->json($users);
 }
+   
+public function upload(Request $request)
+{
+
+
+    $user = auth()->user();
+
+    if ($request->hasFile('image')) {
+        $image = $request->file('image');
+
+        $imageName = $user->id . '_avatar_' . time() . '.' . $image->getClientOriginalExtension();
+
+        $image->move(public_path('uploads/'), $imageName);
+
+        $user->image = $imageName;
+
+        $user->save();
+
+        return response()->json(['success' => 'Image uploaded successfully']);
+    }
+
+    return response()->json(['error' => 'No file uploaded'], 400);
+}
 }

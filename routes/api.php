@@ -44,6 +44,8 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
 
     
     Route::get('/search', [UserController::class, 'search']);
+    Route::post('/uploadAvatar', [UserController::class, 'upload']);
+
 
 
 });
