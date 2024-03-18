@@ -38,6 +38,10 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
     Route::get('/publications/{id}/edit', [PublicationsController::class, 'edit']);
     Route::put('/publications/{id}/edit', [PublicationsController::class, 'update']);
     Route::delete('/publications/{id}/', [PublicationsController::class, 'destroy']); 
+
+    Route::post('/liked/{id}', [PublicationsController::class, 'like']); 
+    Route::put('/disliked/{id}', [PublicationsController::class, 'dislike']); 
+
     
     Route::get('/search', [UserController::class, 'search']);
 
