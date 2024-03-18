@@ -227,4 +227,11 @@ class PublicationsController extends Controller
             return response()->json('you have not liked this post before');
         }
     }
+    public function getLikesCount($post_id) {
+        $likesCount = Like::where('post_id', $post_id)
+                          ->where('like', 1)
+                          ->count();
+    
+        return response()->json(['likesCount' => $likesCount]);
+    }
 }

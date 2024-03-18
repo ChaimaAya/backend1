@@ -41,7 +41,9 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
 
     Route::post('/liked/{id}', [PublicationsController::class, 'like']); 
     Route::put('/disliked/{id}', [PublicationsController::class, 'dislike']); 
+    Route::get('/countLikes/{id}', [PublicationsController::class, 'getLikesCount']); 
     
+
     Route::get('/search', [UserController::class, 'search']);
     Route::post('/uploadAvatar', [UserController::class, 'upload']);
 
