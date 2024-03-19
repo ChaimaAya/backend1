@@ -19,11 +19,21 @@ class PublicationsController extends Controller
     {
         try {
             $authenticatedUser = Auth::user();
-
+    
             $publications = Publication::where('user_id', '!=', $authenticatedUser->id)
                                         ->with('user')
                                         ->get();
-
+            foreach ($publications as $publication) {
+                $likes = Like::where('post_id', $publication->id)
+                                ->where('like', 1)
+                                ->with('user')
+                                ->get();
+                                
+                    $likesCount = $likes->count();
+                    $publication->countLikes = $likesCount;
+                    $publication->likes = $likes; 
+            }
+    
             $data = [
                 'status' => 200,
                 'publications' => $publications
@@ -203,14 +213,31 @@ class PublicationsController extends Controller
         return response()->json($data,200);
     }
     public function like($id){
-        $post_id= $id;
-        $user_id=Auth::user()->id;
-        $like = new Like();
-        $like->post_id = $post_id;
-        $like->user_id= $user_id;
-        $like->like= 1;
-        $like->save();
-        return response()->json('you are liked this post');
+        $post_id = $id;
+        $user_id = Auth::user()->id;
+        
+        $existingLike = Like::where('post_id', $post_id)
+                            ->where('user_id', $user_id)
+                            ->first();
+    
+        if ($existingLike) {
+            if ($existingLike->like === 1) {
+                return response()->json('You have already liked this post.');
+            } else {
+                $existingLike->like = 1;
+                $existingLike->save();
+                return response()->json('You disliked this post previously but now you liked it.');
+            }
+        } else {
+            $like = new Like();
+            $like->post_id = $post_id;
+            $like->user_id = $user_id;
+            $like->like = 1;
+            $like->save();
+            
+            
+            return response()->json('You liked this post.');
+        }
     }
     public function dislike($id){
         $post_id = $id;
@@ -227,11 +254,5 @@ class PublicationsController extends Controller
             return response()->json('you have not liked this post before');
         }
     }
-    public function getLikesCount($post_id) {
-        $likesCount = Like::where('post_id', $post_id)
-                          ->where('like', 1)
-                          ->count();
-    
-        return response()->json(['likesCount' => $likesCount]);
-    }
+
 }
