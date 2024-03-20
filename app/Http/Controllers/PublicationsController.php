@@ -55,6 +55,16 @@ class PublicationsController extends Controller
             $publications = Publication::where('user_id', $authenticatedUser->id)
                                         ->with('user')
                                         ->get();
+            foreach ($publications as $publication) {
+                $likes = Like::where('post_id', $publication->id)
+                                ->where('like', 1)
+                                ->with('user')
+                                ->get();
+                                                            
+                $likesCount = $likes->count();
+                $publication->countLikes = $likesCount;
+                $publication->likes = $likes; 
+            }
 
             $data = [
                 'status' => 200,
