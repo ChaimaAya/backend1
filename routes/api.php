@@ -48,5 +48,8 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
     Route::post('/uploadAvatar', [UserController::class, 'upload']);
 
     Route::post('/reclamation', [ReclamationController::class, 'store']);
+    Route::get('/listReclamation', [ReclamationController::class, 'index']);
+    Route::get('/detailReclamation/{id}', [ReclamationController::class, 'show']);
+
 
 });
