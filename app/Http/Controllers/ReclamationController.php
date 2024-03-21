@@ -25,4 +25,25 @@ class ReclamationController extends Controller
 
         return response()->json($reclamation, 201);
     }
+    public function index()
+    {
+        if (auth()->check()) {
+            $user = auth()->user();
+            $reclamations = Reclamation::where('user_id', $user->id)->get();
+            return response()->json(['reclamations' => $reclamations], 200);
+        } else {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+    }
+    public function show($id)
+    {
+        $reclamation = Reclamation::find($id);
+        if ($reclamation) {
+            return response()->json(['reclamation' => $reclamation], 200);
+        } else {
+            return response()->json(['message' => 'Réclamation non trouvée'], 404);
+        }
+    }
+
 }
+
