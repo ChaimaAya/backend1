@@ -70,5 +70,7 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
      Route::get('/notifications',[NotificationController::class,'LikedNotifications']);
      Route::get('/markAllRead',[NotificationController::class,'markAsReadAll']);
      Route::get('/markAsRead/{id}',[NotificationController::class,'markAsRead']);
+         Route::get('/countNotifications',[NotificationController::class,'countNotifications']);
+
 
 });
