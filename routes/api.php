@@ -29,8 +29,12 @@ Route::middleware('auth:sanctum')->get('/getMessage/{id}', function (Request $re
 });
 Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
     Route::post('/register',[AuthController::class,'register']);
-    Route::post('/login',[AuthController::class,'login']);    Route::get('/user',[AuthController::class,'user']);
+    Route::post('/login',[AuthController::class,'login']);
+    Route::get('/user',[AuthController::class,'user']);
     Route::post('/ajouteTask',[CalendarController::class,'store']);
+    Route::put('/modifierTache/{id}',[CalendarController::class,'updateTask']);
+    Route::delete('/supprimerTask/{id}',[CalendarController::class,'destroy']);
+
     Route::get('/user',[AuthController::class,'user']);
     Route::get('/secteurs',[AuthController::class,'secteurs']);
     Route::put('/updateprofile',[AuthController::class,'updateProfile']);
@@ -66,5 +70,5 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
      Route::get('/notifications',[NotificationController::class,'LikedNotifications']);
      Route::get('/markAllRead',[NotificationController::class,'markAsReadAll']);
      Route::get('/markAsRead/{id}',[NotificationController::class,'markAsRead']);
- 
+
 });

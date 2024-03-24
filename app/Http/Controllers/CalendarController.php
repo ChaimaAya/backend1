@@ -16,8 +16,26 @@ class CalendarController extends Controller
     }
 
 
+    public function destroy($id)
+    {
+        $task = Task::findOrFail($id);
+        $task->delete();
+        return response()->json(['message' => 'La tâche a été supprimée avec succès'], 200);
+    }
 
+    public function updateTask(Request $request, $id)
+    {
 
+        $task = Task::findOrFail($id);
+
+        $task->update([
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'start_time' => $request->input('start_time'),
+            'end_time' => $request->input('end_time'),
+        ]);
+        return response()->json(['message' => 'Tâche mise à jour avec succès'], 200);
+    }
 
     public function getTasks()
     {
@@ -90,11 +108,7 @@ class CalendarController extends Controller
         return response()->json($task, 200);
     }
 
-    public function destroy(Task $task)
-    {
-        $task->delete();
-        return response()->json(null, 204);
-    }
+
 
     public function getMessage($id)
     {
