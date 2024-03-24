@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReclamationController;
 use App\Http\Controllers\PublicationsController;
 
@@ -38,6 +39,7 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
     Route::post('/logout',[AuthController::class,'logout']);
     Route::post('/getUserType',[AuthController::class,'getUserType']);
     Route::get('/getMessage/{id}', [CalendarController::class, 'getMessage']);
+    //Routes Publication
 
     Route::get('/publications', [PublicationsController::class, 'index']);
     Route::post('/publication', [PublicationsController::class, 'store']);
@@ -53,9 +55,16 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
 
     Route::get('/search', [UserController::class, 'search']);
     Route::post('/uploadAvatar', [UserController::class, 'upload']);
+    // Routes reclamations
 
     Route::post('/reclamation', [ReclamationController::class, 'store']);
     Route::get('/listReclamation', [ReclamationController::class, 'index']);
     Route::get('/detailReclamation/{id}', [ReclamationController::class, 'show']);
 
+
+     // Routes notifications
+     Route::get('/notifications',[NotificationController::class,'LikedNotifications']);
+     Route::get('/markAllRead',[NotificationController::class,'markAsReadAll']);
+     Route::get('/markAsRead/{id}',[NotificationController::class,'markAsRead']);
+ 
 });

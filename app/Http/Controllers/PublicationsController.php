@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Like;
 use App\Models\Publication;
 use App\Models\User;
+use App\Notifications\LikedDBNotify;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
 
 class PublicationsController extends Controller
@@ -222,33 +224,38 @@ class PublicationsController extends Controller
         ];
         return response()->json($data,200);
     }
-    public function like($id){
-        $post_id = $id;
-        $user_id = Auth::user()->id;
-        
-        $existingLike = Like::where('post_id', $post_id)
-                            ->where('user_id', $user_id)
-                            ->first();
+    public function like($id)
+{
+    $post_id = $id;
+    $user_id = Auth::user()->id;
     
-        if ($existingLike) {
-            if ($existingLike->like === 1) {
-                return response()->json('You have already liked this post.');
-            } else {
-                $existingLike->like = 1;
-                $existingLike->save();
-                return response()->json('You disliked this post previously but now you liked it.');
-            }
+    $existingLike = Like::where('post_id', $post_id)
+                        ->where('user_id', $user_id)
+                        ->first();
+
+    if ($existingLike) {
+        if ($existingLike->like === 1) {
+            return response()->json('You have already liked this post.');
         } else {
-            $like = new Like();
-            $like->post_id = $post_id;
-            $like->user_id = $user_id;
-            $like->like = 1;
-            $like->save();
-            
-            
-            return response()->json('You liked this post.');
+            $existingLike->like = 1;
+            $existingLike->save();
+            return response()->json('You disliked this post previously but now you liked it.');
         }
+    } else {
+        $like = new Like();
+        $like->post_id = $post_id;
+        $like->user_id = $user_id;
+        $like->like = 1;
+        $like->save();
+        $operation = 'liked';
+        
+        // Envoyer la notification
+        $utilisateursANotifier = User::where('id', '!=', Auth::id())->get();
+        Notification::send($utilisateursANotifier, new LikedDBNotify($like, $operation));
+        
+        return response()->json('You liked this post.');
     }
+}
     public function dislike($id){
         $post_id = $id;
         $user_id = Auth::user()->id;
