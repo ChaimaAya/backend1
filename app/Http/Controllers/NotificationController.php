@@ -21,6 +21,7 @@ class NotificationController extends Controller
                                     ->whereIn('data->publication', $userPostIds) 
                                     ->where('notifications.type', 'App\Notifications\LikedDBNotify') 
                                     ->where('notifications.notifiable_id', $user->id)
+                                    ->whereNull('notifications.read_at')
                                     ->pluck('notifications.id');
 
         // Récupérer les détails des notifications
