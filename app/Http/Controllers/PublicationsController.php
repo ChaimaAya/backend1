@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MyEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Like;
 use App\Models\Publication;
@@ -21,7 +22,7 @@ class PublicationsController extends Controller
     {
         try {
             $authenticatedUser = Auth::user();
-    
+
             $publications = Publication::where('user_id', '!=', $authenticatedUser->id)
                                         ->with('user')
                                         ->get();
@@ -30,12 +31,12 @@ class PublicationsController extends Controller
                                 ->where('like', 1)
                                 ->with('user')
                                 ->get();
-                                
+
                     $likesCount = $likes->count();
                     $publication->countLikes = $likesCount;
-                    $publication->likes = $likes; 
+                    $publication->likes = $likes;
             }
-    
+
             $data = [
                 'status' => 200,
                 'publications' => $publications
@@ -62,10 +63,10 @@ class PublicationsController extends Controller
                                 ->where('like', 1)
                                 ->with('user')
                                 ->get();
-                                                            
+
                 $likesCount = $likes->count();
                 $publication->countLikes = $likesCount;
-                $publication->likes = $likes; 
+                $publication->likes = $likes;
             }
 
             $data = [
@@ -80,6 +81,44 @@ class PublicationsController extends Controller
                 'message' => $e->getMessage()
             ];
              return response()->json($errorData, 500);
+        }
+    }
+    public function userProfilePublicationsId($userId){
+        try {
+            // Récupérer l'utilisateur authentifié
+            // $authenticatedUser = Auth::user();
+
+            // Récupérer les publications de l'utilisateur spécifié par son ID
+            $publications = Publication::where('user_id', $userId)
+                                        ->with('user')
+                                        ->get();
+
+            // Pour chaque publication, récupérer le nombre de likes
+            foreach ($publications as $publication) {
+                $likes = Like::where('post_id', $publication->id)
+                                ->where('like', 1)
+                                ->with('user')
+                                ->get();
+
+                $likesCount = $likes->count();
+                $publication->countLikes = $likesCount;
+                $publication->likes = $likes;
+            }
+
+            // Préparer les données à retourner
+            $data = [
+                'status' => 200,
+                'publications' => $publications
+            ];
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            // Gérer les erreurs
+            $errorData = [
+                'status' => 500,
+                'error' => 'Internal Server Error',
+                'message' => $e->getMessage()
+            ];
+            return response()->json($errorData, 500);
         }
     }
 
@@ -97,49 +136,50 @@ class PublicationsController extends Controller
      */
     public function store(Request $request)
     {
-    if (Auth::check()) {
-        $validator = Validator::make($request->all(), [
-            'description' => 'required|string|max:200',
-            'file' => 'required|mimes:jpg,png,jpeg,mp4,mov,avi|max:20480',
-        ]);
+        if (Auth::check()) {
+            $validator = Validator::make($request->all(), [
+                'description' => 'required|string|max:200',
+                'file' => 'required|mimes:jpg,png,jpeg,mp4,mov,avi|max:20480',
+            ]);
 
-        if ($validator->fails()) {
-            $data = [
-                'status' => 422,
-                'message' => $validator->messages()
-            ];
-            return response()->json($data, 422);
-        } else {
-            $authenticatedUser = Auth::user();
+            if ($validator->fails()) {
+                $data = [
+                    'status' => 422,
+                    'message' => $validator->messages()
+                ];
+                return response()->json($data, 422);
+            } else {
+                $authenticatedUser = Auth::user();
 
-            if ($request->has('file')) {
-                $file = $request->file('file');
-                $filename = time() . '.' . $file->getClientOriginalExtension();
-                $path = 'uploads/';
-                $file->move($path, $filename);
+                if ($request->has('file')) {
+                    $file = $request->file('file');
+                    $filename = time() . '.' . $file->getClientOriginalExtension();
+                    $path = 'uploads/';
+                    $file->move($path, $filename);
+                }
+
+                $publication = new Publication();
+                $publication->description = $request->description;
+                $publication->file = $filename;
+                $publication->user_id = $authenticatedUser->id;
+                $publication->save();
+
+                event(new MyEvent($publication));
+
+                $data = [
+                    'status' => 200,
+                    'message' => 'Données créées avec succès'
+                ];
+                return response()->json($data, 200);
             }
-
-            $publication = new Publication();
-            $publication->description = $request->description;
-            $publication->file = $filename;
-            $publication->user_id = $authenticatedUser->id;
-            $publication->save();
-
+        } else {
             $data = [
-                'status' => 200,
-                'message' => 'Données créées avec succès'
+                'status' => 401,
+                'message' => 'Utilisateur non authentifié'
             ];
-            return response()->json($data, 200);
+            return response()->json($data, 401);
         }
-    } else {
-        $data = [
-            'status' => 401,
-            'message' => 'Utilisateur non authentifié'
-        ];
-        return response()->json($data, 401);
     }
-    }
-
     /**
      * Display the specified resource.
      */
@@ -228,7 +268,7 @@ class PublicationsController extends Controller
 {
     $post_id = $id;
     $user_id = Auth::user()->id;
-    
+
     $existingLike = Like::where('post_id', $post_id)
                         ->where('user_id', $user_id)
                         ->first();
@@ -248,22 +288,22 @@ class PublicationsController extends Controller
         $like->like = 1;
         $like->save();
         $operation = 'liked';
-        
+
         // Envoyer la notification
         $utilisateursANotifier = User::where('id', '!=', Auth::id())->get();
         Notification::send($utilisateursANotifier, new LikedDBNotify($like, $operation));
-        
+
         return response()->json('You liked this post.');
     }
 }
     public function dislike($id){
         $post_id = $id;
         $user_id = Auth::user()->id;
-    
+
         $like = Like::where('post_id', $post_id)
                     ->where('user_id', $user_id)
                     ->first();
-    
+
         if($like) {
             $like->update(['like' => 0]);
             return response()->json('you have disliked this post');
