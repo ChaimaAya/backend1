@@ -31,6 +31,7 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
     Route::post('/register',[AuthController::class,'register']);
     Route::post('/login',[AuthController::class,'login']);
     Route::get('/user',[AuthController::class,'user']);
+    Route::get('/userById/{userId}', [AuthController::class, 'userById']);
     Route::post('/ajouteTask',[CalendarController::class,'store']);
     Route::put('/modifierTache/{id}',[CalendarController::class,'updateTask']);
     Route::delete('/supprimerTask/{id}',[CalendarController::class,'destroy']);
@@ -39,6 +40,7 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
     Route::get('/secteurs',[AuthController::class,'secteurs']);
     Route::put('/updateprofile',[AuthController::class,'updateProfile']);
     Route::get('/startup',[AuthController::class,'getStartupDetailsForUser']);
+    Route::get('/startup/{id}',[AuthController::class,'getStartupDetailsForUserById']);
     Route::get('/getTasks',[CalendarController::class,'getTasks']);
     Route::post('/logout',[AuthController::class,'logout']);
     Route::post('/getUserType',[AuthController::class,'getUserType']);
@@ -48,6 +50,7 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
     Route::get('/publications', [PublicationsController::class, 'index']);
     Route::post('/publication', [PublicationsController::class, 'store']);
     Route::get('/publicationsUser', [PublicationsController::class, 'userProfilePublications']);
+    Route::get('/userProfilePublicationsId/{id}', [PublicationsController::class, 'userProfilePublicationsId']);
     Route::get('/publications/{id}', [PublicationsController::class, 'show']);
     Route::get('/publications/{id}/edit', [PublicationsController::class, 'edit']);
     Route::put('/publications/{id}/edit', [PublicationsController::class, 'update']);

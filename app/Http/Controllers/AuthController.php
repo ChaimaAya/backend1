@@ -148,12 +148,41 @@ class AuthController extends Controller
         $user = Auth::user();
         return response()->json($user);
    }
+
+
+   public function userById($userId){
+    try {
+        $user = User::findOrFail($userId);
+
+        return response()->json($user);
+    } catch (\Exception $e) {
+        $errorData = [
+            'status' => 500,
+            'error' => 'Internal Server Error',
+            'message' => $e->getMessage()
+        ];
+        return response()->json($errorData, 500);
+    }
+}
+
+
+
+
    public function getStartupDetailsForUser(Request $request)
     {
         $user = $request->user();
         $startup = Startup::where('admin_id', $user->id)->first();
         return response()->json($startup);
     }
+
+
+    public function getStartupDetailsForUserById($userId)
+    {
+        $user = User::findOrFail($userId);
+        $startup = Startup::where('admin_id', $user->id)->first();
+        return response()->json($startup);
+    }
+
 
     public function logout()
     {
