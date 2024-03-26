@@ -63,12 +63,7 @@ class NotificationController extends Controller
 
 
         }
-        else {
-            return response()->json(['error' => 'No  notifications '], 400); 
-
-
-        }
-
+       
 
     }
 
