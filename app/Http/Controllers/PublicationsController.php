@@ -43,11 +43,11 @@ class PublicationsController extends Controller
             return response()->json($data, 200);
         } catch (\Exception $e) {
             $errorData = [
-                'status' => 400,
+                'status' => 500,
                 'error' => 'Internal Server Error',
                 'message' => $e->getMessage()
             ];
-             return response()->json($errorData, 400);
+             return response()->json($errorData, 500);
         }
     }
     public function userProfilePublications(){
@@ -75,11 +75,11 @@ class PublicationsController extends Controller
             return response()->json($data, 200);
         } catch (\Exception $e) {
             $errorData = [
-                'status' => 400,
+                'status' => 500,
                 'error' => 'Internal Server Error',
                 'message' => $e->getMessage()
             ];
-             return response()->json($errorData, 400);
+             return response()->json($errorData, 500);
         }
     }
 
@@ -154,11 +154,11 @@ class PublicationsController extends Controller
             return response()->json($data, 200);
         } catch (\Exception $e) {
             $errorData = [
-                'status' => 400,
+                'status' => 500,
                 'error' => 'Internal Server Error',
                 'message' => $e->getMessage()
             ];
-            return response()->json($errorData, 400);
+            return response()->json($errorData, 500);
         }
     }
 
@@ -175,11 +175,11 @@ class PublicationsController extends Controller
             return response()->json($data, 200);
         } catch (\Exception $e) {
             $errorData = [
-                'status' => 400,
+                'status' => 500,
                 'error' => 'Internal Server Error',
                 'message' => $e->getMessage()
             ];
-            return response()->json($errorData, 400);
+            return response()->json($errorData, 500);
         }
     }
 

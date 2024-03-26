@@ -151,7 +151,7 @@ class CalendarController extends Controller
         if ($task) {
             return response()->json($task, 201);
         } else {
-            return response()->json(['error' => 'An error occurred while adding the task.'], 400);
+            return response()->json(['error' => 'An error occurred while adding the task.'], 500);
         }
     }
 

@@ -7,7 +7,7 @@ use App\Models\Secteur;
 use App\Models\Startup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use Illumiznate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
